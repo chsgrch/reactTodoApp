@@ -1,0 +1,18 @@
+.app-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.app-header__header-text {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.app-header__info {
+  font-size: 18pt;
+  font-weight: bold;
+  color: grey;
+  margin-bottom: 10px;
+}

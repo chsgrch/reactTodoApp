@@ -11,3 +11,12 @@
   height: 50px;
   margin: 5px;
 }
+
+.done {
+  text-decoration: line-through;
+}
+
+.todo-list-item.important .todo-list-item__label {
+  color: steelblue;
+  font-weight: bold;
+}

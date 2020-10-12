@@ -1,9 +1,0 @@
-.search-panel {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.search-panel__input {
-  margin-right: 5px;
-}

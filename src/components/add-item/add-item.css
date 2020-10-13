@@ -1,0 +1,14 @@
+.add-item {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-item__input {
+  margin-right: 5px;
+}
+
+.add-item__button {
+  white-space: nowrap;
+}

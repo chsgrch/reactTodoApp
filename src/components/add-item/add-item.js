@@ -1,38 +1,41 @@
-import React, { Component } from 'react'
-import './add-item.css'
+import React, { Component } from "react";
+import "./add-item.css";
 
 export default class AddItem extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      itemText: ''
-    }
+      itemText: "",
+    };
   }
   onChangeInput = (e) => {
     this.setState({
-      itemText: e.target.value
-    })
-  }
+      itemText: e.target.value,
+    });
+  };
+  onSubmit = (e) => {
+    const { addTodo } = this.props;
+    const { itemText } = this.state;
+    if (itemText !== "") {
+      addTodo(itemText);
+      this.setState({
+        itemText: "",
+      });
+    }
+    e.preventDefault();
+  };
   render() {
-    const { addTodo } = this.props
-    const { itemText } = this.state
     return (
-      <div className="add-item" >
+      <form className="add-item d-flex" onSubmit={this.onSubmit}>
         <input
           type="text"
           className="add-item__input form-control search-panel__input"
           value={this.state.itemText}
           onChange={this.onChangeInput}
+          placeholder="What`s need to be done"
         />
-        <button
-          className="add-item__button btn btn-success"
-          onClick={() => {
-            if (itemText !== '') {
-              addTodo(itemText)
-            }
-          }}
-        >Add item</button>
-      </div>
-    )
+        <button className="add-item__button btn btn-success">Add item</button>
+      </form>
+    );
   }
 }

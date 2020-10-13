@@ -1,7 +1,7 @@
 .app-header {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
@@ -10,9 +10,12 @@
   margin-bottom: 10px;
 }
 
-.app-header__info {
+.app-header__info-important,
+.app-header__info-done {
   font-size: 18pt;
   font-weight: bold;
   color: grey;
   margin-bottom: 10px;
+  word-wrap: none;
+  /* width: 100%; */
 }

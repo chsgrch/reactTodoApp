@@ -1,22 +1,25 @@
-import React from "react";
+import React, { Component } from "react";
 
 import "./search-panel.css";
 
-const SearchPanel = () => {
-  const customStyle = {
-    fontSize: "20px",
+export default class SearchPanel extends Component {
+  changeItem = (e) => {
+    this.props.searchTodo(e.target.value);
   };
-
-  return (
-    <div className="search-panel">
-      <input
-        className="form-control search-panel__input"
-        style={customStyle}
-        placeholder="search"
-        type="text"
-      />
-    </div>
-  );
-};
-
-export default SearchPanel;
+  render() {
+    const customStyle = {
+      fontSize: "20px",
+    };
+    return (
+      <div className="search-panel">
+        <input
+          className="form-control search-panel__input"
+          style={customStyle}
+          placeholder="search"
+          type="text"
+          onChange={this.changeItem}
+        />
+      </div>
+    );
+  }
+}

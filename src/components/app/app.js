@@ -3,7 +3,7 @@ import AppHeader from "../app-header";
 import SearchPanel from "../search-panel";
 import ItemStatusFilter from "../item-status-filter";
 import TodoList from "../todo-list";
-import AddItem from "../add-item"
+import AddItem from "../add-item";
 
 import "./app.css";
 
@@ -17,7 +17,9 @@ export default class App extends Component {
         this.createTodoItem("Drinc coffee"),
         this.createTodoItem("Build react app"),
         this.createTodoItem("Have breakfast"),
-      ]
+      ],
+      filteredArray: [],
+      filter: false,
     };
   }
 
@@ -26,76 +28,108 @@ export default class App extends Component {
       id: this.maxId++,
       label: label,
       important: false,
-      done: false
-    }
-  }
+      done: false,
+    };
+  };
 
   getCountImportant = () => {
-    let newArray = this.state.todoData.filter(el => el.important === true)
-    return newArray.length
-  }
+    let newArray = this.state.todoData.filter((el) => el.important === true);
+    return newArray.length;
+  };
 
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id)
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
+      const idx = todoData.findIndex((el) => el.id === id);
+      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
       return {
-        todoData: newArray
-      }
-    })
-  }
+        todoData: newArray,
+      };
+    });
+  };
 
   addItem = (itemText) => {
-    const newItem = this.createTodoItem(itemText)
+    const newItem = this.createTodoItem(itemText);
 
     this.setState(({ todoData }) => {
-      const newArray = [...todoData, newItem]
+      const newArray = [...todoData, newItem];
       return {
-        todoData: newArray
-      }
-    })
-  }
+        todoData: newArray,
+      };
+    });
+  };
+
+  onChangeProperty = (arr, id, propName) => {
+    const idx = arr.findIndex((el) => {
+      return el.id === id;
+    });
+    const oldItem = arr[idx];
+    const newItem = { ...oldItem, [propName]: !oldItem[propName] };
+
+    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)];
+  };
 
   onChangeDone = (id) => {
-    const newArray = [...this.state.todoData];
-    const idx = newArray.findIndex(el => {
-      return el.id === id
-    })
-    newArray[idx].done = !newArray[idx].done;
     this.setState(({ todoData }) => {
       return {
-        todoData: newArray
-      }
-    })
-  }
+        todoData: this.onChangeProperty(todoData, id, "done"),
+      };
+    });
+  };
 
   onChangeImportant = (id) => {
-    console.log(`Important change, ${id}`)
-    const newArray = [...this.state.todoData];
-    const idx = newArray.findIndex(el => {
-      return el.id === id
-    })
-    newArray[idx].important = !newArray[idx].important;
     this.setState(({ todoData }) => {
       return {
-        todoData: newArray
-      }
-    })
-  }
+        todoData: this.onChangeProperty(todoData, id, "important"),
+      };
+    });
+  };
+
+  onSearchTodo = (text) => {
+    if (text.length === 0) {
+      this.setState(({ filteredArray, filter }) => {
+        return {
+          filteredArray: [],
+          filter: false,
+        };
+      });
+    } else {
+      this.setState(({ todoData, filteredArray, filter }) => {
+        return {
+          filteredArray: todoData.filter((el) => {
+            return el.label.toLowerCase().indexOf(text.toLowerCase()) >= 0;
+          }),
+          filter: true,
+        };
+      });
+    }
+  };
 
   render() {
-    const { todoData } = this.state;
+    const { todoData, filteredArray } = this.state;
+
+    const doneCount = todoData.filter((el) => {
+      return el.done === true;
+    }).length;
+    const todoCount = todoData.length - doneCount;
+
     return (
       <div className="app">
-        <AppHeader countImportant={this.getCountImportant()} countAll={todoData.length} />
+        <AppHeader
+          countImportant={this.getCountImportant()}
+          countAll={todoData.length}
+          doneCount={doneCount}
+          todoCount={todoCount}
+        />
         <div className="search-area">
-          <SearchPanel className="search-area__panel" />
+          <SearchPanel
+            className="search-area__panel"
+            searchTodo={(text) => this.onSearchTodo(text)}
+          />
           <ItemStatusFilter className="search-area__filter" />
         </div>
         <TodoList
-          todos={todoData}
+          todos={this.state.filter ? filteredArray : todoData}
           onDeleted={(id) => this.deleteItem(id)}
-          // onChangeImportant={(id, important) => this.onChangeImportant(id, important)}
           changeDone={(id) => this.onChangeDone(id)}
           changeImportant={(id) => this.onChangeImportant(id)}
         />

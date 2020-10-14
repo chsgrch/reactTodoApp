@@ -18,7 +18,8 @@ export default class App extends Component {
         this.createTodoItem("Build react app"),
         this.createTodoItem("Have breakfast"),
       ],
-      filteredArray: [],
+      searchText: '',
+      filterName: 'all',
       filter: false,
     };
   }
@@ -84,33 +85,51 @@ export default class App extends Component {
     });
   };
 
-  onSearchTodo = (text) => {
-    if (text.length === 0) {
-      this.setState(({ filteredArray, filter }) => {
-        return {
-          filteredArray: [],
-          filter: false,
-        };
-      });
-    } else {
-      this.setState(({ todoData, filteredArray, filter }) => {
-        return {
-          filteredArray: todoData.filter((el) => {
-            return el.label.toLowerCase().indexOf(text.toLowerCase()) >= 0;
-          }),
-          filter: true,
-        };
-      });
-    }
+  onSearchTodo = (arr, text) => {
+    if (text.length === 0) return arr;
+    return arr.filter((el) => {
+      return el.label.toLowerCase().indexOf(text.toLowerCase()) > -1
+    })
   };
 
+  onFilter = (arr, filterName) => {
+    switch (filterName) {
+      case 'all':
+        return arr;
+
+      case 'active':
+        return arr.filter((el) => el.done === false);
+
+      case 'done':
+        return arr.filter((el) => el.done === true);
+
+      case 'important':
+        return arr.filter((el) => el.important === true);
+
+      default:
+        return arr;
+    }
+  }
+
+  onChangeFilterName = (filterName) => {
+    this.setState({ filterName })
+  }
+
+  onChangeSearchText = (searchText) => {
+    this.setState({ searchText })
+  }
+
   render() {
-    const { todoData, filteredArray } = this.state;
+    const { todoData, searchText, filterName } = this.state;
 
     const doneCount = todoData.filter((el) => {
       return el.done === true;
     }).length;
     const todoCount = todoData.length - doneCount;
+
+    const visibleItems = this.onFilter(
+      this.onSearchTodo(todoData, searchText),
+      filterName)
 
     return (
       <div className="app">
@@ -123,12 +142,16 @@ export default class App extends Component {
         <div className="search-area">
           <SearchPanel
             className="search-area__panel"
-            searchTodo={(text) => this.onSearchTodo(text)}
+            changeSearchText={(text) => this.onChangeSearchText(text)}
           />
-          <ItemStatusFilter className="search-area__filter" />
+          <ItemStatusFilter
+            className="search-area__filter"
+            onFilter={(filterName) => this.onChangeFilterName(filterName)}
+            filterName={filterName}
+          />
         </div>
         <TodoList
-          todos={this.state.filter ? filteredArray : todoData}
+          todos={visibleItems}
           onDeleted={(id) => this.deleteItem(id)}
           changeDone={(id) => this.onChangeDone(id)}
           changeImportant={(id) => this.onChangeImportant(id)}
